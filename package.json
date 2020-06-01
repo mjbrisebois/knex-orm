@@ -1,0 +1,31 @@
+{
+  "name": "@whi/knex-orm",
+  "version": "0.1.0",
+  "description": "An object-relational mapping library based on Knex.js.",
+  "main": "src/index.js",
+  "files": [
+    "README.md"
+  ],
+  "dependencies": {
+    "@whi/serious-error-types": "^0.1.5",
+    "@whi/skeptic": "^0.1.2",
+    "@whi/stdlog": "^0.3.0",
+    "sql-formatter": "^2.3.3"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "knex": "^0.21.1",
+    "mocha": "^7.1.2",
+    "sqlite3": "^4.2.0",
+    "superstruct": "^0.8.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matthew Brisebois",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mjbrisebois/knex-orm"
+  }
+}
