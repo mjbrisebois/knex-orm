@@ -57,7 +57,10 @@ class Table {
 	if ( this.joins !== null ) {
 	    for ( let join of this.joins() ) {
 		base.column( join.columns );
-		base.leftJoin( join.table, join.base_col, `${this.alias}.${join.foreign_col}` );
+		if( join.custom )
+		    base.leftJoin( join.table, join.custom );
+		else
+		    base.leftJoin( join.table, join.base_col, `${this.alias}.${join.foreign_col}` );
 	    }
 	}
 	try {
@@ -73,12 +76,19 @@ class Table {
     }
 
     join ( local_col, foreign_col ) {
-	return {
+	const join_config		= {
 	    "table":		this.table_alias,
-	    "base_col":		`${this.alias}.${local_col}`,
-	    "foreign_col":	foreign_col,
 	    "columns":		Object.assign({}, this.columns ),
 	};
+	if ( typeof local_col === "function" )
+	    return Object.assign( join_config, {
+		"custom":		local_col,
+	    });
+	else
+	    return Object.assign( join_config, {
+		"base_col":		`${this.alias}.${local_col}`,
+		"foreign_col":		foreign_col,
+	    });
     }
 
     async paginate ( where, { page = 1, size = 25, debug = false, order_by = this.defaults.order_by } = {}) {
