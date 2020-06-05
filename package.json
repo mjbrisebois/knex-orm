@@ -1,6 +1,6 @@
 {
   "name": "@whi/knex-orm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An object-relational mapping library based on Knex.js.",
   "main": "src/index.js",
   "files": [
