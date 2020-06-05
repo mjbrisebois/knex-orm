@@ -45,6 +45,22 @@ class Table {
 	return this.client( this.name );
     }
 
+    get select () {
+	return this.client( this.table_alias );
+    }
+
+    raw ( sql, ...bindings ) {
+	return this.client.raw( sql, bindings );
+    }
+
+    aggregate ( ag_func, column, alias = null ) {
+	return this.raw( `${ag_func}(??) as ??`, column, alias || column );
+    }
+
+    any ( column, alias ) {
+	return this.aggregate("ANY_VALUE", column, alias );
+    }
+
     queryToDebugString ( query ) {
 	return sql_formatter.format( query.toString(), { indent: "    " });
     }
@@ -53,16 +69,8 @@ class Table {
 	const base			= client.from( from );
 
 	base.column( this.columns );
+	this.addJoins( base );
 
-	if ( this.joins !== null ) {
-	    for ( let join of this.joins() ) {
-		base.column( join.columns );
-		if( join.custom )
-		    base.leftJoin( join.table, join.custom );
-		else
-		    base.leftJoin( join.table, join.base_col, `${this.alias}.${join.foreign_col}` );
-	    }
-	}
 	try {
 	    // log.silly("Base query for '%s'\n\n%s\n", () => [ this.name, this.queryToDebugString( base ) ] );
 	} catch ( err ) {
@@ -73,6 +81,21 @@ class Table {
 	    base.orderBy( order_by[0], order_by[1] );
 
 	return base;
+    }
+
+    addJoins ( query, { columns = true } = {} ) {
+	if ( this.joins !== null ) {
+	    for ( let join of this.joins() ) {
+		if ( columns === true )
+		    query.column( join.columns );
+
+		if( join.custom )
+		    query.leftJoin( join.table, join.custom );
+		else
+		    query.leftJoin( join.table, join.base_col, `${this.alias}.${join.foreign_col}` );
+	    }
+	}
+	return query;
     }
 
     join ( local_col, foreign_col ) {
